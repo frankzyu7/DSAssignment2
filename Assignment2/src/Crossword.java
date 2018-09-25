@@ -26,6 +26,10 @@ public class Crossword {
 
     private JFrame f;
     private static char[][] charSet;
+    private static String status = "";
+    	// Status has listening (the server), Inputting (the word), Voting, Preping (the vote)
+    private static int xCoordinate=-1; // record the last xCoordinate
+    private static int yCoordinate=-1; // record the last yCoordinate
     
 
     /**
@@ -51,6 +55,18 @@ public class Crossword {
         });
     }
 
+    public static String getStatus() {
+    	return status;
+    }
+    
+    public static void setX(int x) {
+    	xCoordinate = x;
+    }
+    
+    public static void setY(int y) {
+    	yCoordinate = y;
+    }
+    
     /**
      * Create the application.
      */
@@ -114,12 +130,13 @@ public class Crossword {
     		public void mouseClicked(MouseEvent e) {
     			int x = xComboBox.getSelectedIndex();
     			int y = yComboBox.getSelectedIndex();
+    			int index = (x)*20+y;
     			char l =  (char) (65+letterComboBox.getSelectedIndex());
-    			if ((CrosswordPanel.textFields[x][y].getText().equals(String.valueOf("\u0020")))) {
-    				CrosswordPanel.textFields[x][y].setText(Character.toString(l));}
-    			else    				
-    				submitButton.setText(CrosswordPanel.textFields[x][y].getText());
+    			if ((CrosswordPanel.textFields.get(index).getText().equals(String.valueOf("\u0020")))) {
+    				CrosswordPanel.textFields.get(index).setText(Character.toString(l));}
 
+    			else    				
+    				
     				;
     		}
     		
@@ -162,7 +179,8 @@ public class Crossword {
     }
 
     static class CrosswordPanel extends JPanel {
-        public static JButton textFields[][];
+        //public static JButton textFields[][];
+        public static ArrayList<JButton> textFields;
         private JLabel label[][];
 
         void setCrossword(char array[][]) {
@@ -170,24 +188,37 @@ public class Crossword {
             int w = array.length;
             int h = array[0].length;
             setLayout(new GridLayout(w + 1, h + 1));
-            textFields = new JButton[w][h];
+            textFields = new ArrayList <JButton>();
             label = new JLabel[w + 1][h + 1];
             for (int x = -1; x < w; x++) {
                 // label[x][y] = new JLabel(String.valueOf(x+1));
                 add(new JLabel(String.valueOf(x + 1)));
             }
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
+            
+            
+            for (int x = 0; x < h; x++) {
+                for (int y = 0; y < w; y++) {
                     char c = array[x][y];
-                    if (x == 0) {
-                        add(new JLabel(String.valueOf(y + 1)));
+                    if (y == 0) {
+                        add(new JLabel(String.valueOf(x + 1)));
                     }
                     if (c != 0) {
-                        textFields[x][y] = new JButton(String.valueOf(c));
+                    	JButton newButton = new JButton(String.valueOf(c));
                         //textFields[x][y].setFont(textFields[x][y].getFont().deriveFont(20.0f));
-                        textFields[x][y].setPreferredSize(new Dimension(60, 30)); // the widths of the textfileds
+                        newButton.setPreferredSize(new Dimension(60, 30)); // the widths of the textfileds
+                        newButton.addMouseListener(new MouseAdapter(){
+                        	@Override
+                    		public void mouseClicked(MouseEvent e) {
+                        		int ind = textFields.indexOf((JButton)e.getSource())+1;
+                        	
+                        		Crossword.setX((ind-(ind%20))/20+1);
+                        		Crossword.setY(ind%20);                 				
+                    		}
+                    		
+                    	});
+                        textFields.add(newButton) ;
 
-                        add(textFields[x][y]);
+                        add(newButton);
                     } else {
                         add(new JLabel());
                     }
@@ -198,8 +229,8 @@ public class Crossword {
         }
 
        public char[][] getCrossword() {
-            int w = textFields.length;
-            int h = textFields[0].length;
+            int w = 20;
+            int h = 20;
             char crossword[][] = new char[w][h];
 
             return crossword;
