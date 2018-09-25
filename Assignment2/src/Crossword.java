@@ -1,12 +1,15 @@
 
 //12345
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -23,10 +26,13 @@ public class Crossword {
 
     private JFrame f;
     private static char[][] charSet;
+    
 
     /**
      * Launch the application.
      */
+    
+    
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -103,15 +109,35 @@ public class Crossword {
         InputContainer.add(letterComboBox);
         
         JButton submitButton = new JButton("Submit");
+        submitButton.addMouseListener(new MouseAdapter(){
+        	@Override
+    		public void mouseClicked(MouseEvent e) {
+    			int x = xComboBox.getSelectedIndex();
+    			int y = yComboBox.getSelectedIndex();
+    			char l =  (char) (65+letterComboBox.getSelectedIndex());
+    			if ((CrosswordPanel.textFields[x][y].getText().equals(String.valueOf("\u0020")))) {
+    				CrosswordPanel.textFields[x][y].setText(Character.toString(l));}
+    			else    				
+    				submitButton.setText(CrosswordPanel.textFields[x][y].getText());
+
+    				;
+    		}
+    		
+    	});
+    	
+    
         InputContainer.add(submitButton);
         f.getContentPane().add(InputContainer, BorderLayout.SOUTH);
 
-        f.setSize(800, 800);
+        f.setSize(1500, 1000);
         f.setLocationRelativeTo(null);
         f.setVisible(true);
 
     }
-
+    
+    
+    
+    
     private static void generate(CrosswordPanel panel) {
         int w = 20;
         int h = 20;
@@ -122,16 +148,21 @@ public class Crossword {
 
             }
         }
-
+       
         panel.setCrossword(crossword);
     }
 
+   
+    
+    
     class InputPanel extends JPanel {
-
+    	
+    	
+    	
     }
 
-    class CrosswordPanel extends JPanel {
-        private JTextField textFields[][];
+    static class CrosswordPanel extends JPanel {
+        public static JButton textFields[][];
         private JLabel label[][];
 
         void setCrossword(char array[][]) {
@@ -139,7 +170,7 @@ public class Crossword {
             int w = array.length;
             int h = array[0].length;
             setLayout(new GridLayout(w + 1, h + 1));
-            textFields = new JTextField[w][h];
+            textFields = new JButton[w][h];
             label = new JLabel[w + 1][h + 1];
             for (int x = -1; x < w; x++) {
                 // label[x][y] = new JLabel(String.valueOf(x+1));
@@ -152,9 +183,9 @@ public class Crossword {
                         add(new JLabel(String.valueOf(y + 1)));
                     }
                     if (c != 0) {
-                        textFields[x][y] = new JTextField(String.valueOf(c));
-                        textFields[x][y].setFont(textFields[x][y].getFont().deriveFont(20.0f));
-                        textFields[x][y].setColumns(1); // the widths of the textfileds
+                        textFields[x][y] = new JButton(String.valueOf(c));
+                        //textFields[x][y].setFont(textFields[x][y].getFont().deriveFont(20.0f));
+                        textFields[x][y].setPreferredSize(new Dimension(60, 30)); // the widths of the textfileds
 
                         add(textFields[x][y]);
                     } else {
@@ -166,7 +197,7 @@ public class Crossword {
             repaint();
         }
 
-        char[][] getCrossword() {
+       public char[][] getCrossword() {
             int w = textFields.length;
             int h = textFields[0].length;
             char crossword[][] = new char[w][h];
