@@ -24,7 +24,7 @@ import javax.swing.*;
 
 public class Crossword {
 
-    private JFrame f;
+    private static JFrame f;
     private static char[][] charSet;
     private static String status = "";
     	// Status has listening (the server), Inputting (the word), Voting, Preping (the vote)
@@ -174,14 +174,12 @@ public class Crossword {
     
     class InputPanel extends JPanel {
     	
-    	
-    	
     }
 
     static class CrosswordPanel extends JPanel {
-        //public static JButton textFields[][];
         public static ArrayList<JButton> textFields;
         private JLabel label[][];
+        private static InputPanel input;
 
         void setCrossword(char array[][]) {
             removeAll();
@@ -212,8 +210,10 @@ public class Crossword {
                         		int ind = textFields.indexOf((JButton)e.getSource())+1;
                         	
                         		Crossword.setX((ind-(ind%20))/20+1);
-                        		Crossword.setY(ind%20);                 				
-                    		}
+                        		Crossword.setY(ind%20);  
+                        		new InputWindow();
+
+                        	}
                     		
                     	});
                         textFields.add(newButton) ;
