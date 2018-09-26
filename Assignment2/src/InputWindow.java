@@ -1,72 +1,114 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
+import java.awt.Window.*;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
 
-public class InputWindow extends JFrame {
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+public class InputWindow extends JFrame implements ActionListener {
 
 	private JPanel contentPane;
-    public static ArrayList<JButton> characterList;
+    private static ArrayList<JButton> characterList;
+    private JLabel label[][];
+    private static InputWindow frame;
+    private static  JComboBox<Character>  comboBox;
+    private static Crossword c;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					InputWindow frame = new InputWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+
+	public static InputWindow getFrame() {
+		return frame;
 	}
 
 	/**
 	 * Create the frame.
 	 */
-	public InputWindow() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public InputWindow(Crossword c){
+
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.CENTER);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[]{0, 0, 0, 0};
+		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		panel.setLayout(gbl_panel);
 		
-        Character[][] list = new Character[13][2];
-        characterList = new ArrayList <JButton>();
+		
+        Character[] list = new Character[26];
+        for (int i = 0; i < 26; i++) {
+            list[i]=(char) (65 + i);
+        }
 
-		  for (int x = 0; x < 13; x++) {
-              for (int y = 0; y < 2; y++) {
-                  list[x][y]=(char) (65 + x+y);
-                  	JButton newButton = new JButton(String.valueOf(list[x][y]));
-                      //textFields[x][y].setFont(textFields[x][y].getFont().deriveFont(20.0f));
-                      //newButton.setPreferredSize(new Dimension(60, 30)); // the widths of the textfileds
-                      newButton.addMouseListener(new MouseAdapter(){
-                      	@Override
-                  		public void mouseClicked(MouseEvent e) {
-                      		
-                     		
+        comboBox = new JComboBox<>(list);
+		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+		gbc_comboBox.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.gridx = 2;
+		gbc_comboBox.gridy = 3;
+		panel.add(comboBox, gbc_comboBox);
+		
+        JButton submitButton = new JButton("Submit");
+        submitButton.addActionListener(this);
+        submitButton.addMouseListener(new MouseAdapter(){
+        	@Override
+    		public void mouseClicked(MouseEvent e) {
+    			char l =  (char) (65+comboBox.getSelectedIndex());
+    			Crossword.CrosswordPanel.textFields.get(Crossword.getInd()).setText(Character.toString(l));
+    			
 
-                      	                  		
-                  	}});
+        	}
+    				
+    		
+    		
+    	});
+		GridBagConstraints gbc_btnSubmit = new GridBagConstraints();
+		gbc_btnSubmit.gridx = 2;
+		gbc_btnSubmit.gridy = 5;
+		panel.add(submitButton, gbc_btnSubmit);
 
-                      characterList.add(newButton);
-                      add(newButton);
-                  }                   
-              }
+
+		
+		
+
           }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+			char l =  (char) (65+comboBox.getSelectedIndex());
+			Crossword.CrosswordPanel.textFields.get(Crossword.getInd()).setText(Character.toString(l));
+			
+
+    	
+
+		
+        this.dispose();
+	}
 	}
 
 

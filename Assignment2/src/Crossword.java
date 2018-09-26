@@ -30,6 +30,8 @@ public class Crossword {
     	// Status has listening (the server), Inputting (the word), Voting, Preping (the vote)
     private static int xCoordinate=-1; // record the last xCoordinate
     private static int yCoordinate=-1; // record the last yCoordinate
+    private static int ind = -1;
+    
     
 
     /**
@@ -62,7 +64,13 @@ public class Crossword {
     public static void setX(int x) {
     	xCoordinate = x;
     }
-    
+    public static void setInd(int index) {
+    	ind = index;
+    }
+    public static  int  getInd() {
+    	return ind;
+    }
+
     public static void setY(int y) {
     	yCoordinate = y;
     }
@@ -180,6 +188,7 @@ public class Crossword {
         public static ArrayList<JButton> textFields;
         private JLabel label[][];
         private static InputPanel input;
+        private static Crossword cr;
 
         void setCrossword(char array[][]) {
             removeAll();
@@ -208,11 +217,12 @@ public class Crossword {
                         	@Override
                     		public void mouseClicked(MouseEvent e) {
                         		int ind = textFields.indexOf((JButton)e.getSource())+1;
-                        	
+                        		Crossword.setInd(ind-1);
                         		Crossword.setX((ind-(ind%20))/20+1);
                         		Crossword.setY(ind%20);  
-                        		new InputWindow();
-
+                                InputWindow newFrame = new InputWindow(cr);
+                                newFrame.setVisible(true);
+                                
                         	}
                     		
                     	});
